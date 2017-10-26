@@ -1,0 +1,283 @@
+﻿@model  MVCWebGridWebApp.Models.GridInfoSuhas
+@{
+    Layout = null;
+    WebGrid grid = new WebGrid(rowsPerPage: 10, ajaxUpdateContainerId: "grid", fieldNamePrefix: "g1", pageFieldName: "p1");
+    grid.Bind(Model.ListOfCustomer); }
+<style type="text/css">
+    input {
+        border: 1px solid #e2e2e2;
+        background: #fff;
+        color: #333;
+        font-size: 15px;
+        width: 90%;
+        height: 28px;
+    }
+
+    body {
+        font-family: "Candara";
+        font-size: 12px;
+        line-height: 1.42857143;
+        color: #333;
+        background-color: #808080;
+    }
+
+    .mytable {
+        width: 75%;
+        padding: 30px;
+        border: 1px solid #c0c0c0;
+        border-spacing: 0;
+        border-collapse: collapse;
+        color: #000000;
+    }
+
+        .mytable td {
+            padding: 8px;
+            border-top: 1px solid #c0c0c0;
+            text-align: center;
+        }
+
+        .mytable th {
+            padding: 8px;
+            border-bottom: 4px solid #c0c0c0;
+            font-weight: bold;
+            text-align: center;
+            background-color: #FFFFFF;
+            line-height: 1.4285;
+            color: black;
+        }
+
+            .mytable th a {
+                text-decoration: none;
+                font-weight: bold;
+                color: black;
+            }
+
+        .mytable tfoot td {
+            padding: 8px;
+            text-align: center;
+            background-color: #FFFFFF;
+            line-height: 1.4285;
+            border-top: 4px solid #c0c0c0;
+        }
+
+    .myRowStyle {
+        background-color: #dddddd;
+        vertical-align: central;
+    }
+
+    .myalternatingRowStyle {
+        background-color: #FFFFFF;
+        vertical-align: central;
+    }
+
+    .button {
+        font: bold 11px Arial;
+        text-decoration: none;
+        background-color: #EEEEEE;
+        color: #333333;
+        padding: 5px 15px 8px 12px;
+        border-top: 1px solid #CCCCCC;
+        border-right: 1px solid #333333;
+        border-bottom: 1px solid #333333;
+        border-left: 1px solid #CCCCCC;
+    }
+
+    .asdasdStyle {
+        width: 10%;
+    }
+
+    .asdStyle {
+        width: 10%;
+    }
+
+    .asdddStyle {
+        width: 10%;
+    }
+
+    .ActionStyle {
+        width: 35%;
+    }
+</style>
+
+
+<script src="~/Scripts/jquery-1.11.0.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/jquery-migrate-1.2.1.js"></script>
+
+
+<script type="text/javascript">
+    $(".add").live("click", function () {
+        var existrow = $('.save').length;
+        if (existrow == 0) {
+            var index = $("#grid tbody tr").length + 1;
+            var asd = "asd_" + index;
+            var asddd = "asddd_" + index;
+            var Save = "Save_" + index;
+            var Cancel = "Cancel_" + index;
+            var tr = '<tr class="alternate-row">' +
+            '<td></td>' +
+            '<td><span> <input id="' + asd + '" type="text" /></span></td>' +
+            '<td><span> <input id="' + asddd + '" type="text" /></span></td>' +
+            '<td> <a href="#" id="' + Save + '" class="save" style="margin-left:10px; color:#000000;" >Save</a><a href="#" id="' + Cancel + '"  class="icancel" style="margin-left:25px; color:#000000;">Cancel</a></td>' +
+            '</tr>'
+            $("#grid tbody").append(tr);
+        } else {
+            alert('First Save your previous record !!');
+        }
+    });
+    $(".icancel").live("click", function () {
+        var flag = confirm('Are you sure to cancel');
+        if (flag) {
+            $(this).parents("tr").remove();
+        }
+    });
+    $(".edit").live("click", function () {
+        var str = $(this).attr("id").split("_"); id = str[1]; var asdasd = "#asdasd_" + id;
+        var spanasdasd = "#spanasdasd_" + id;
+        var asd = "#asd_" + id;
+        var spanasd = "#spanasd_" + id;
+        var asddd = "#asddd_" + id;
+        var spanasddd = "#spanasddd_" + id;
+        $(asdasd).show();
+        $(spanasdasd).hide();
+        $(asd).show();
+        $(spanasd).hide();
+        $(asddd).show();
+        $(spanasddd).hide();
+        $(this).hide();
+        $("#Update_" + id).show();
+        $("#Cancel_" + id).show();
+    });
+    $(".save").live("click", function () {
+        var id = $("#grid tbody tr").length;
+        var asdasd = $("#asdasd_" + id).val();
+        var asd = $("#asd_" + id).val();
+        var asddd = $("#asddd_" + id).val();
+        if (id != "") {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("SaveRecord", "test")',
+                data: { "asdasd": asdasd, "asd": asd, "asddd": asddd },
+                dataType: "json",
+                beforeSend: function () { },
+                success: function (data) {
+                    if (data.result == true) {
+                        $("#divmsg").html("Record has been saved successfully !!");
+                        setTimeout(function () {
+                            window.location.replace("../Facultative/ShowFC");
+                        }, 2000);
+                    }
+                    else {
+                        alert('There is some error');
+                    }
+                }
+            });
+        }
+    });
+    $(".update").live("click", function () {
+        var str = $(this).attr("id").split("_");
+        id = str[1];
+        var asdasd = $("#asdasd_" + id).val();
+        var spanasdasd = $("#spanasdasd_" + id).val();
+        var asd = $("#asd_" + id).val();
+        var spanasd = $("#spanasd_" + id).val();
+        var asddd = $("#asddd_" + id).val();
+        var spanasddd = $("#spanasddd_" + id).val();
+
+        if (id != "") {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("UpdateRecord", "test")',
+                data: { "asdasd": asdasd, "asd": asd, "asddd": asddd },
+                dataType: "json",
+                beforeSend: function () { },
+                success: function (data) {
+                    if (data.result == true) {
+                        $("#Update_" + id).hide();
+                        $("#Cancel_" + id).hide();
+                        $("#Edit_" + id).show();
+
+                        var asdasd = "#asdasd_" + id;
+                        var spanasdasd = "#spanasdasd_" + id;
+                        var asd = "#asd_" + id;
+                        var spanasd = "#spanasd_" + id;
+                        var asddd = "#asddd_" + id;
+                        var spanasddd = "#spanasddd_" + id;
+                        $(asdasd).hide();
+                        $(spanasdasd).show();
+                        $(asd).hide();
+                        $(spanasd).show();
+                        $(asddd).hide();
+                        $(spanasddd).show();
+                        $(asdasd).text($(asdasd).val());
+                        $(asd).text($(asd).val());
+                        $(asddd).text($(asddd).val());
+                    }
+                    else { alert('There is some error') }
+                }
+            });
+        }
+    });
+    $(".delete").live("click", function () {
+        var str = $(this).attr("id").split("_");
+        id = str[1];
+        var flag = confirm('Are you sure to delete ??');
+        if (id != "" && flag) {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("DeleteRecord", "test")',
+                data: { "id": id },
+                dataType: "json",
+                beforeSend: function () { },
+                success: function (data) {
+                    if (data.result == true) {
+                        $("#Update_" + id).parents("tr").remove();
+                    }
+                    else {
+                        alert('There is some error');
+                    }
+                }
+            });
+        }
+    });
+    $(".cancel").live("click", function () {
+        var str = $(this).attr("id").split("_");
+        var asdasd = "#asdasd_" + id;
+        var spanasdasd = "#spanasdasd_" + id;
+        var asd = "#asd_" + id;
+        var spanasd = "#spanasd_" + id;
+        var asddd = "#asddd_" + id;
+        var spanasddd = "#spanasddd_" + id;
+        $(asdasd).hide();
+        $(spanasdasd).show();
+        $(asd).hide();
+        $(spanasd).show();
+        $(asddd).hide();
+        $(spanasddd).show(); $(this).hide();
+        $("#Update_" + id).hide();
+        $("#Edit_" + id).show();
+    });
+
+</script>
+<div id="divmsg" style="color: green; font-weight: bold"></div>
+<a href="#" class="add button">Add New Record</a><br />
+<br />
+@grid.GetHtml(
+htmlAttributes: new { id = "grid" },
+ tableStyle: "mytable",
+ rowStyle: "myRowStyle", alternatingRowStyle: "myalternatingRowStyle",
+fillEmptyRows: false,
+mode: WebGridPagerModes.All,
+columns: new[] {
+grid.Column("asdasd", style:"asdasdStyle", header: "asdasd", canSort: true,format: @<span> <span id="spanasdasd_@item.asdasd">@item.asdasd</span> @Html.TextBox("asdasd_"+(string)item.asdasd,(string) item.asdasd,new{@style="display:none"})</span>),
+grid.Column("asd", style:"asdStyle", header: "asd", canSort: true,format: @<span> <span id="spanasd_@item.asdasd">@item.asd</span> @Html.TextBox("asd_"+(string)item.asdasd,(string) item.asd,new{@style="display:none"})</span>),
+grid.Column("asddd", style:"asdddStyle", header: "asddd", canSort: false,format: @<span> <span id="spanasddd_@item.asdasd">@item.asddd</span> @Html.TextBox("asddd_"+(string)item.asdasd,(string) item.asddd,new{@style="display:none"})</span>),
+ grid.Column(header: "Action", style:"ActionStyle", canSort: true,format:@<text>
+<a href="#" id="Edit_@item.asdasd" style="margin-right:10px; margin-left:10px;  color:#000000" class="edit">Edit</a>
+<a href="#" id="Update_@item.asdasd" style="display:none;margin-left:10px;margin-right:10px; color:#000000" class="update">Update</a>
+<a href="#" id="Cancel_@item.asdasd" style="display:none; margin-left:10px; margin-right:10px; color:#000000"  class="cancel">Cancel</a>
+<a href="#" id="Delete_@item.asdasd"  class="delete" style="margin-left:10px;margin-right:10px; color:#000000">Delete</a></text>)
+})
